@@ -5,7 +5,7 @@
   "main": "timeular.js",
   "scripts": {
     "test": "npx jest",
-    "coverage": "npm test -- --ci --coverage --reporters=\"jest-junit\"",
+    "coverage": "npm test -- --coverage --reporters=\"jest-junit\"",
     "coverage:ci": "npm test -- --ci --coverage --reporters=\"jest-junit\" && coveralls < coverage/lcov.info",
     "release": "npx semantic-release",
     "semantic-release": "semantic-release",
