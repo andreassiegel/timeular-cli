@@ -99,15 +99,6 @@ describe('startActivity()', () => {
 
   it('checks current activity tracking', async () => {
     apiHelpers.getActivities.mockImplementationOnce(() => Promise.resolve([activity]))
-    apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(null))
-
-    await startActivity('sleeping')
-
-    expect(apiHelpers.getCurrentTracking).toHaveBeenCalledTimes(1)
-  })
-
-  it('checks current activity tracking', async () => {
-    apiHelpers.getActivities.mockImplementationOnce(() => Promise.resolve([activity]))
     apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(currentTracking))
 
     await startActivity('sleeping')
