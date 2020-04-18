@@ -234,6 +234,19 @@ describe('Timeular API Helpers', () => {
       await expect(apiHelpers.getCurrentTracking(token)).resolves.toEqual(response.data.currentTracking)
     })
 
+    it('returns null when nothing is tracked', async () => {
+      const response = {
+        status: 200,
+        statusText: 'OK',
+        data: {
+          currentTracking: null
+        }
+      }
+      axios.get.mockImplementationOnce(() => Promise.resolve(response))
+
+      await expect(apiHelpers.getCurrentTracking(token)).resolves.toBeNull()
+    })
+
     it('returns undefined for 401 Unauthorized', async () => {
       const response = {
         status: 401,
