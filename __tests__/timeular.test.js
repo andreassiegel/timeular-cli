@@ -26,7 +26,7 @@ describe('Application Tests', () => {
 
     it('prints help to stdout without any argument', async () => {
       const result = await cli([], '.')
-      const help = await cli(['-h'], '.')
+      const help = await cli(['help'], '.')
       expect(result.stdout).toEqual(help.stdout)
     })
   })
@@ -36,6 +36,27 @@ describe('Application Tests', () => {
       const resultH = await cli(['-h'], '.')
       const resultHelp = await cli(['--help'], '.')
       expect(resultH.stdout).toEqual(resultHelp.stdout)
+    })
+
+    it('returns the same for -h and help', async () => {
+      const resultH = await cli(['-h'], '.')
+      const resultHelp = await cli(['help'], '.')
+      expect(resultH.stdout).toEqual(resultHelp.stdout)
+    })
+
+    it('returns usage info to stdout', async () => {
+      const result = await cli(['help'], '.')
+      expect(result.stdout).toContain('Usage: timeular [options] [command]')
+    })
+
+    it('returns command info to stdout', async () => {
+      const expectedCommands = ['track [activityName]', 'report [options]', 'stop']
+      const result = await cli(['help'], '.')
+      expect(result.stdout).toContain('Commands:')
+      const commands = result.stdout.replace(/\n/g, ' ').replace(/^.*Commands:/, '').split(/\s(\s)+/)
+      expectedCommands.forEach(command => {
+        expect(commands).toContain(command)
+      })
     })
   })
 
