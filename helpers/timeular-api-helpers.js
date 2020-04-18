@@ -8,7 +8,7 @@ const createAPIHeaders = token => ({
   Authorization: `Bearer ${token}`
 })
 
-async function signIn () {
+const signIn = async () => {
   const { data: { token } } = await axios.post(`${TIMEULAR_API_URL}/developer/sign-in`, {
     apiKey: TIMEULAR_API_KEY,
     apiSecret: TIMEULAR_API_SECRET
