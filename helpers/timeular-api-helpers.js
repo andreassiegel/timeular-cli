@@ -60,10 +60,49 @@ const _convertToAPICompatibleDate = date => {
   return dateString.slice(0, dateString.length - 1)
 }
 
-module.exports = { signIn, getActivities, startTracking, getCurrentTracking, stopTracking, downloadReport }
+const parseNote = note => {
+  if (!note) {
+    return undefined
+  }
 
-// (async () => {
-//   const token = await signIn()
-//   const activities = await getActivities(token)
-//   console.log(activities)
-// })()
+  const { note: noteAfterTagExtraction, tags } = _extractTags(note)
+  const { note: text, mentions } = _extractMentions(noteAfterTagExtraction)
+
+  return { text, tags, mentions }
+}
+
+const _extractTags = (note, tags = []) => {
+  if (_containsTag(note)) {
+    const { key: tag, indices, strippedKey: key } = _extractFirstKey(note, '#')
+    tags.push({ key, indices })
+    note = note.replace(tag, key)
+
+    return _extractTags(note, tags)
+  }
+  return { note, tags }
+}
+
+const _extractMentions = (note, mentions = []) => {
+  if (_containsMention(note)) {
+    const { key: mention, indices, strippedKey: key } = _extractFirstKey(note, '@')
+    mentions.push({ key, indices })
+    note = note.replace(mention, key)
+
+    return _extractMentions(note, mentions)
+  }
+  return { note, mentions }
+}
+
+const _extractFirstKey = (note, char) => {
+  const key = note.split(/\s+/).find(w => w.startsWith(char)) || ''
+  const index = note.indexOf(key)
+  const strippedKey = key.substring(1, key.length)
+
+  return { key, indices: [index, index + key.length - 1], strippedKey }
+}
+
+const _containsTag = text => text.search(/\s#[\w\d]|^#[\w\d]/) > -1
+
+const _containsMention = text => text.search(/\s@[\w\d]|^@[\w\d]/) > -1
+
+module.exports = { signIn, getActivities, startTracking, getCurrentTracking, stopTracking, downloadReport, parseNote }
