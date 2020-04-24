@@ -65,44 +65,36 @@ const parseNote = note => {
     return undefined
   }
 
-  const { note: noteAfterTagExtraction, tags } = _extractTags(note)
-  const { note: text, mentions } = _extractMentions(noteAfterTagExtraction)
+  // const { note: noteAfterTagExtraction, tags } = _extractTags(note)
+  const { text, mentions, tags } = _extractLabels(note)
 
   return { text, tags, mentions }
 }
 
-const _extractTags = (note, tags = []) => {
-  if (_containsTag(note)) {
-    const { key: tag, indices, strippedKey: key } = _extractFirstKey(note, '#')
-    tags.push({ key, indices })
-    note = note.replace(tag, key)
+const _extractLabels = (text, tags = [], mentions = []) => {
+  if (_containsLabel(text)) {
+    const { key: label, indices, strippedKey: key } = _extractFirstKey(text)
+    if (label.startsWith('#')) {
+      tags.push({ key, indices })
+    }
+    if (label.startsWith('@')) {
+      mentions.push({ key, indices })
+    }
+    text = text.replace(label, key)
 
-    return _extractTags(note, tags)
+    return _extractLabels(text, tags, mentions)
   }
-  return { note, tags }
+  return { text, tags, mentions }
 }
 
-const _extractMentions = (note, mentions = []) => {
-  if (_containsMention(note)) {
-    const { key: mention, indices, strippedKey: key } = _extractFirstKey(note, '@')
-    mentions.push({ key, indices })
-    note = note.replace(mention, key)
-
-    return _extractMentions(note, mentions)
-  }
-  return { note, mentions }
-}
-
-const _extractFirstKey = (note, char) => {
-  const key = note.split(/\s+/).find(w => w.startsWith(char)) || ''
+const _extractFirstKey = note => {
+  const key = note.split(/\s+/).find(w => w.startsWith('@') || w.startsWith('#')) || ''
   const index = note.indexOf(key)
   const strippedKey = key.substring(1, key.length)
 
   return { key, indices: [index, index + key.length - 1], strippedKey }
 }
 
-const _containsTag = text => text.search(/\s#[\w\d]|^#[\w\d]/) > -1
-
-const _containsMention = text => text.search(/\s@[\w\d]|^@[\w\d]/) > -1
+const _containsLabel = text => text.search(/\s[@#][\w\d]|^[@#][\w\d]/) > -1
 
 module.exports = { signIn, getActivities, startTracking, getCurrentTracking, stopTracking, downloadReport, parseNote }

@@ -487,5 +487,40 @@ describe('Timeular API Helpers', () => {
       const result = apiHelpers.parseNote(text)
       expect(result).toEqual(expectedNote)
     })
+
+    it('converts multiple occurrences', () => {
+      const text = 'Test with #tag and @mention #anothertag'
+      const expectedNote = {
+        text: 'Test with tag and mention anothertag',
+        tags: [
+          {
+            indices: [
+              10,
+              13
+            ],
+            key: 'tag'
+          },
+          {
+            indices: [
+              26,
+              36
+            ],
+            key: 'anothertag'
+          }
+        ],
+        mentions: [
+          {
+            indices: [
+              18,
+              25
+            ],
+            key: 'mention'
+          }
+        ]
+      }
+
+      const result = apiHelpers.parseNote(text)
+      expect(result).toEqual(expectedNote)
+    })
   })
 })
