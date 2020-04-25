@@ -60,15 +60,7 @@ const _convertToAPICompatibleDate = date => {
   return dateString.slice(0, dateString.length - 1)
 }
 
-const parseNote = note => {
-  if (!note) {
-    return undefined
-  }
-
-  const { text, mentions, tags } = _extractLabels(note)
-
-  return { text, tags, mentions }
-}
+const parseNote = note => note ? _extractLabels(note) : undefined
 
 const _extractLabels = (text, tags = [], mentions = []) => {
   if (_containsLabel(text)) {
