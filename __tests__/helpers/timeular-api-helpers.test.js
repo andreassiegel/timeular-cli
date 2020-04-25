@@ -112,6 +112,7 @@ describe('Timeular API Helpers', () => {
   describe('startTracking()', () => {
     const token = '12345'
     const activityId = '123'
+    const note = '#development Working with @John on the new project'
     const response = {
       status: 200,
       statusText: 'OK',
@@ -147,6 +148,39 @@ describe('Timeular API Helpers', () => {
       const expectedBody = { startedAt: '2019-05-14T11:01:58.135' }
 
       await apiHelpers.startTracking(token, activityId)
+
+      expect(axios.post).toHaveBeenCalledWith(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, expectedBody, { headers: expectedHeaders })
+    })
+
+    it('sends request with note', async () => {
+      axios.post.mockImplementationOnce(() => Promise.resolve(response))
+      const expectedHeaders = { Authorization: `Bearer ${token}` }
+      const expectedBody = {
+        startedAt: '2019-05-14T11:01:58.135',
+        note: {
+          text: 'development Working with John on the new project',
+          tags: [
+            {
+              indices: [
+                0,
+                11
+              ],
+              key: 'development'
+            }
+          ],
+          mentions: [
+            {
+              indices: [
+                25,
+                29
+              ],
+              key: 'John'
+            }
+          ]
+        }
+      }
+
+      await apiHelpers.startTracking(token, activityId, note)
 
       expect(axios.post).toHaveBeenCalledWith(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, expectedBody, { headers: expectedHeaders })
     })
