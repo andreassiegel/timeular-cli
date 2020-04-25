@@ -93,4 +93,13 @@ describe('status()', () => {
     expect(console.log).toHaveBeenCalledTimes(1)
     expect(console.log).toHaveBeenLastCalledWith(colors.feedbackColor('Currently tracking: eating - development Working with John on the new project (1h 1m 58s)'))
   })
+
+  it('writes an error if current tracking check fails', async () => {
+    apiHelpers.getCurrentTracking.mockRejectedValue({ response: { data: { message: 'something went wrong' } } })
+
+    await status()
+
+    expect(console.log).toHaveBeenCalledTimes(1)
+    expect(console.log).toHaveBeenLastCalledWith({ message: 'something went wrong' })
+  })
 })
