@@ -65,7 +65,6 @@ const parseNote = note => {
     return undefined
   }
 
-  // const { note: noteAfterTagExtraction, tags } = _extractTags(note)
   const { text, mentions, tags } = _extractLabels(note)
 
   return { text, tags, mentions }
