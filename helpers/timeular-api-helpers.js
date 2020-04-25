@@ -64,12 +64,14 @@ const parseNote = note => note ? _extractLabels(note) : undefined
 
 const _extractLabels = (text, tags = [], mentions = []) => {
   if (_containsLabel(text)) {
-    const { key: label, indices, strippedKey: key } = _extractFirstKey(text)
-    if (label.startsWith('#')) {
-      tags.push({ key, indices })
-    }
-    if (label.startsWith('@')) {
-      mentions.push({ key, indices })
+    const { label, indices, key } = _extractFirstKey(text)
+    switch (label.substring(0, 1)) {
+      case '#':
+        tags.push({ key, indices })
+        break
+      case '@':
+        mentions.push({ key, indices })
+        break
     }
     text = text.replace(label, key)
 
@@ -79,11 +81,11 @@ const _extractLabels = (text, tags = [], mentions = []) => {
 }
 
 const _extractFirstKey = note => {
-  const key = note.split(/\s+/).find(w => w.startsWith('@') || w.startsWith('#')) || ''
-  const index = note.indexOf(key)
-  const strippedKey = key.substring(1, key.length)
+  const label = note.split(/\s+/).find(w => w.startsWith('@') || w.startsWith('#')) || ''
+  const index = note.indexOf(label)
+  const key = label.substring(1, label.length)
 
-  return { key, indices: [index, index + key.length - 1], strippedKey }
+  return { label, indices: [index, index + label.length - 1], key }
 }
 
 const _containsLabel = text => text.search(/\s[@#][\w\d]|^[@#][\w\d]/) > -1
