@@ -3,14 +3,10 @@
 require('dotenv').config()
 
 const yargs = require('yargs')
-const inquirer = require('inquirer')
 const { start, stop, status, list } = require('./commands')
 const { getCLIVersion } = require('./helpers/get-cli-version')
 const errorHandler = require('./helpers/errorHandler')
 const apiLogin = require('./middleware/apiLogin')
-
-inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
-inquirer.registerPrompt('datepicker', require('inquirer-datepicker'))
 
 const init = async () => {
   // eslint-disable-next-line no-unused-expressions
