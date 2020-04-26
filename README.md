@@ -2,7 +2,6 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![GitHub version](https://badge.fury.io/gh/andreassiegel%2Ftimeular-cli.svg)](https://badge.fury.io/gh/andreassiegel%2Ftimeular-cli)
 
 [![Build Status](https://travis-ci.com/andreassiegel/timeular-cli.svg?branch=master)](https://travis-ci.com/andreassiegel/timeular-cli)
 [![codebeat badge](https://codebeat.co/badges/f9ce0d07-2a62-43b1-bbd8-17f02bc1bb86)](https://codebeat.co/projects/github-com-andreassiegel-timeular-cli-master)
