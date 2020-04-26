@@ -150,21 +150,17 @@ describe('list command', () => {
     expect(console.log).toHaveBeenCalledWith(`0\t${chalk.bold('eating \uF017')}`)
   })
 
-  it('writes an error if getting activities fails', async () => {
+  it('rejects if getting activities fails', async done => {
     apiHelpers.getActivities.mockRejectedValue({ response: { data: { message: 'something went wrong' } } })
 
-    await list(argv)
-
-    expect(console.log).toHaveBeenCalledTimes(1)
-    expect(console.log).toHaveBeenLastCalledWith({ message: 'something went wrong' })
+    await expect(list(argv)).rejects.toHaveProperty('response', { data: { message: 'something went wrong' } })
+    done()
   })
 
-  it('writes an error if current tracking check fails', async () => {
+  it('rejects if current tracking check fails', async done => {
     apiHelpers.getCurrentTracking.mockRejectedValue({ response: { data: { message: 'something went wrong' } } })
 
-    await list(argv)
-
-    expect(console.log).toHaveBeenCalledTimes(1)
-    expect(console.log).toHaveBeenLastCalledWith({ message: 'something went wrong' })
+    await expect(list(argv)).rejects.toHaveProperty('response', { data: { message: 'something went wrong' } })
+    done()
   })
 })

@@ -20,7 +20,7 @@ const list = async argv => {
     })
   } catch (err) {
     spinner.end()
-    console.log((err.response && err.response.data) || err)
+    throw err
   }
 }
 

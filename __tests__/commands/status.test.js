@@ -101,21 +101,17 @@ describe('status command', () => {
     expect(console.log).toHaveBeenLastCalledWith('Currently tracking: eating - development Working with John on the new project (1h 1m 58s)')
   })
 
-  it('writes an error if current tracking check fails', async () => {
+  it('rejects if current tracking check fails', async done => {
     apiHelpers.getCurrentTracking.mockRejectedValue({ response: { data: { message: 'something went wrong' } } })
 
-    await status(argv)
-
-    expect(console.log).toHaveBeenCalledTimes(1)
-    expect(console.log).toHaveBeenLastCalledWith('something went wrong')
+    await expect(status(argv)).rejects.toHaveProperty('response', { data: { message: 'something went wrong' } })
+    done()
   })
 
-  it('writes an error if current tracking check throws an error', async () => {
+  it('rejects if current tracking check throws an error', async done => {
     apiHelpers.getCurrentTracking.mockRejectedValue(new Error('something went wrong'))
 
-    await status(argv)
-
-    expect(console.log).toHaveBeenCalledTimes(1)
-    expect(console.log).toHaveBeenLastCalledWith(new Error('something went wrong'))
+    await expect(status(argv)).rejects.toThrow(new Error('something went wrong'))
+    done()
   })
 })
