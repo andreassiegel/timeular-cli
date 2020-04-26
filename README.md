@@ -14,73 +14,139 @@
 [![dependencies Status](https://david-dm.org/andreassiegel/timeular-cli/status.svg)](https://david-dm.org/andreassiegel/timeular-cli)
 [![devDependencies Status](https://david-dm.org/andreassiegel/timeular-cli/dev-status.svg)](https://david-dm.org/andreassiegel/timeular-cli?type=dev)
 
-# timeular-cli
-CLI wrapper for Timeular's API to track activities and generate csv & xlsx reports!
-Can be used as an interactive cli by asking the user questions or directly by setting the required input via their corresponding flags
+# Timeular CLI
 
-# Installation
+Command-line integration for [Timeular](https://timeular.com/) to track
+activities and check the status of the currently tracked activity.
 
-`npm i -g timeular-cli`
+It can be used as an interactive CLI by asking the user questions or directly
+by setting the required input via the corresponding flags.
 
+The current version does not require a Timeular Pro account.
+It uses only API features that are available in the free version.
 
-Update your .profile or .bashrc or .zshrc to include the following environment variables:
+## Installation
 
+*While refactoring is ongoing and new features are being added, the application
+is not published to any registry yet.*
+
+Therefore, you need to check out the repository before you can actually install it:
+
+```shell script
+$ git clone https://github.com/andreassiegel/timeular-cli.git
+$ cd timeular-cli
+$ npm install -g
 ```
+
+## Configuration
+
+Timeular CLI is using the public Timeular API that requires authentication via your
+personal API key.
+
+You can get your API credentials from the [Timeular account page](https://profile.timeular.com/#/app/account).
+
+To be able to use Timeular CLI, you have to export the API credentials as
+environment variables, e.g., in your `.profile` or `.bashrc` or `.zshrc` file:
+
+```shell script
 export TIMEULAR_API_KEY="XXXXXXXXXX"
 export TIMEULAR_API_SECRET="YYYYYYYYYY"
 ```
 
-You can get the values for these fields by visiting your [Account page](https://profile.timeular.com/#/app/account) on Timeular
+## Usage
 
-# Usage
-`timeular --help`
 ```
-➜  github timeular --help
-  _____   _                              _
- |_   _| (_)  _ __ ___     ___   _   _  | |   __ _   _ __
-   | |   | | | '_ ` _ \   / _ \ | | | | | |  / _` | | '__|
-   | |   | | | | | | | | |  __/ | |_| | | | | (_| | | |
-   |_|   |_| |_| |_| |_|  \___|  \__,_| |_|  \__,_| |_|
-
-Usage: timeular [options] [command]
-
-Options:
-  -v, --version         output the version number
-  -h, --help            output usage information
+$ timeular --help
+Usage: timeular <command> [options]
 
 Commands:
-  track [activityName]  start tracking for a specific activity, stops current tracking before starting a new one
-  report [options]      generates timeular report in csv or xlsx format
-  stop                  stops tracking current activity
-```
-
-`timeular track --help`
-
-`timeular report --help`
-```
-MacBook-Pro-3:github andreassiegel$ timeular report --help
-  _____   _                              _
- |_   _| (_)  _ __ ___     ___   _   _  | |   __ _   _ __
-   | |   | | | '_ ` _ \   / _ \ | | | | | |  / _` | | '__|
-   | |   | | | | | | | | |  __/ | |_| | | | | (_| | | |
-   |_|   |_| |_| |_| |_|  \___|  \__,_| |_|  \__,_| |_|
-
-Usage: report [options]
-
-generates timeular report in csv or xlsx format
+  timeular start [activityName]  Start tracking for a specific activity, stops current tracking
+                                 before starting a new one
+  timeular stop                  Stops tracking current activity
+  timeular status                Shows the current activity tracking status
+  timeular list                  Lists all activities that are available for tracking
 
 Options:
-  -s, --startTime <startTime>  startTime
-  -e, --endTime <endTIme>      endTime
-  -f, --format <format>        xlsx or csv
-  -h, --help                   output usage information
+  -h, --help     output usage information                                                  [boolean]
+  -v, --version  output the version number                                                 [boolean]
 ```
 
-## Track Activity
-- `timeular track <activityName>`  or
-- `timeular track`
+### Tracking Activity
 
-## Generate A Report
-- `timeular report -s <startTime> -e <endTime> -f <format>` or
-- `timeular report`
+Activities can be tracked in multiple ways:
 
+#### Interactive Tracking
+
+If you do not provide any options to the `start` command,
+you will be prompted to select the activity to track:
+
+```
+$ timeular start
+0   Administration
+1   ARC
+2   DEV
+3   Education
+✔ Number of activity to track: · 0
+✔ Note: · Prepare release
+Stopped tracking: DEV - Working on Timeular CLI (1h 28m 11s)
+Started tracking: Administration - Prepare release
+```
+
+The list includes all activities you configured in Timeular.
+
+#### Tracking of a specified Activity
+
+You can directly specify the activity in order to start tracking without selecting from the list:
+
+```shell script
+$ timeular track <activity>
+```
+
+Nevertheless, you will be prompted for a note.
+
+#### Tracking of a specified Activity with a Note
+
+In addition, you can also add a note when you can directly specify the activity and
+start tracking immediately:
+
+```shell script
+$ timeular track <activity> -m <note>
+```
+
+The note may contain tags (`#tag`) and mentions (`@mention`).
+
+### Check the Tracking Status
+
+Use the `status` command to check your current tracking status:
+
+```
+$ timeular status
+Currently tracking: DEV - Working on Timeular CLI (1h 16m 2s)
+```
+
+The output includes the note of the current tracking, if available.
+The current duration is displayed as well.
+
+### Stop Tracking
+
+To finish an activity, use the `stop` command:
+
+```
+$ timeular stop
+Stopped tracking: DEV (4h 24m 51s)
+```
+
+### List Activities
+
+You can use the `list` command to print all activities that are available for tracking.
+The output is indexed and sorted alphabetically.
+
+If the tracker is running, the currently tracked is highlighted.
+
+```
+$ timeular list
+0   Administration
+1   ARC
+2   DEV  
+3   Education
+```

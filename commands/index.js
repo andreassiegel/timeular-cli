@@ -1,6 +1,6 @@
 module.exports = {
-  startActivity: require('./startActivity'),
-  stopActivity: require('./stopActivity.js'),
+  start: require('./start'),
+  stop: require('./stop.js'),
   status: require('./status'),
-  generateReport: require('./generateReport')
+  list: require('./list')
 }

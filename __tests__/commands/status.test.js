@@ -1,6 +1,5 @@
 const { status } = require('../../commands')
 const apiHelpers = require('../../helpers/timeular-api-helpers')
-const colors = require('../../helpers/colors')
 
 jest.mock('../../helpers/timeular-api-helpers')
 
@@ -12,8 +11,10 @@ global.Date = class extends Date {
   }
 }
 
-describe('status()', () => {
-  const token = 'token12345'
+describe('status command', () => {
+  const argv = {
+    apiToken: 'token12345'
+  }
 
   const currentTracking = {
     activity: {
@@ -66,40 +67,51 @@ describe('status()', () => {
     jest.clearAllMocks()
   })
 
-  apiHelpers.signIn.mockImplementation(() => Promise.resolve(token))
-
   it('checks current activity tracking', async () => {
     apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(currentTracking))
 
-    await status()
+    await status(argv)
 
     expect(apiHelpers.getCurrentTracking).toHaveBeenCalledTimes(1)
+  })
+
+  it('uses provided token', async () => {
+    apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(currentTracking))
+
+    await status(argv)
+
+    expect(apiHelpers.getCurrentTracking).toHaveBeenCalledWith(argv.apiToken)
   })
 
   it('writes to console if no current tracking', async () => {
     apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(null))
 
-    await status()
+    await status(argv)
 
     expect(console.log).toHaveBeenCalledTimes(1)
-    expect(console.log).toHaveBeenLastCalledWith(colors.feedbackColor('Currently not tracking any activity'))
+    expect(console.log).toHaveBeenLastCalledWith('Currently not tracking any activity')
   })
 
   it('writes current tracking to console', async () => {
     apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(currentTracking))
 
-    await status()
+    await status(argv)
 
     expect(console.log).toHaveBeenCalledTimes(1)
-    expect(console.log).toHaveBeenLastCalledWith(colors.feedbackColor('Currently tracking: eating - development Working with John on the new project (1h 1m 58s)'))
+    expect(console.log).toHaveBeenLastCalledWith('Currently tracking: eating - development Working with John on the new project (1h 1m 58s)')
   })
 
-  it('writes an error if current tracking check fails', async () => {
+  it('rejects if current tracking check fails', async done => {
     apiHelpers.getCurrentTracking.mockRejectedValue({ response: { data: { message: 'something went wrong' } } })
 
-    await status()
+    await expect(status(argv)).rejects.toHaveProperty('response', { data: { message: 'something went wrong' } })
+    done()
+  })
 
-    expect(console.log).toHaveBeenCalledTimes(1)
-    expect(console.log).toHaveBeenLastCalledWith({ message: 'something went wrong' })
+  it('rejects if current tracking check throws an error', async done => {
+    apiHelpers.getCurrentTracking.mockRejectedValue(new Error('something went wrong'))
+
+    await expect(status(argv)).rejects.toThrow(new Error('something went wrong'))
+    done()
   })
 })

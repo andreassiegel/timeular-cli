@@ -192,6 +192,25 @@ describe('trackingParser()', () => {
     expect(result).toBe(expectedResult)
   })
 
+  it('skips undefined note', () => {
+    const tracking = {
+      activity: {
+        id: '123',
+        name: 'sleeping',
+        color: '#a1b2c3',
+        integration: 'zei'
+      },
+      startedAt: '2019-05-14T10:00:00.000',
+      note: undefined
+    }
+
+    const expectedResult = 'sleeping (1h 1m 58s)'
+
+    const result = trackingParser(tracking)
+
+    expect(result).toBe(expectedResult)
+  })
+
   it('skips zero hours in duration', () => {
     const tracking = {
       activity: {
@@ -259,5 +278,110 @@ describe('trackingParser()', () => {
     const result = trackingParser(tracking)
 
     expect(result).toInclude(expectedDuration)
+  })
+
+  it('omits zero seconds in duration', () => {
+    const tracking = {
+      activity: {
+        id: '123',
+        name: 'sleeping',
+        color: '#a1b2c3',
+        integration: 'zei'
+      },
+      startedAt: '2019-05-14T10:01:58.000',
+      note: {
+        text: '',
+        tags: [],
+        mentions: []
+      }
+    }
+
+    const expectedDuration = '(1h 0m)'
+
+    const result = trackingParser(tracking)
+
+    expect(result).toInclude(expectedDuration)
+  })
+
+  it('omits duration for very short periods', () => {
+    const tracking = {
+      activity: {
+        id: '123',
+        name: 'sleeping',
+        color: '#a1b2c3',
+        integration: 'zei'
+      },
+      startedAt: '2019-05-14T11:01:58.000',
+      note: {
+        text: 'development Working with John on the new project',
+        tags: [
+          {
+            indices: [
+              0,
+              11
+            ],
+            key: 'development'
+          }
+        ],
+        mentions: [
+          {
+            indices: [
+              25,
+              29
+            ],
+            key: 'John'
+          }
+        ]
+      }
+    }
+
+    const expectedText = 'sleeping - development Working with John on the new project'
+
+    const result = trackingParser(tracking)
+
+    expect(result).toEqual(expectedText)
+  })
+
+  it('parses also time entries', () => {
+    const timeEntry = {
+      id: '987',
+      activity: {
+        id: '123',
+        name: 'sleeping',
+        color: '#a1b2c3',
+        integration: 'zei'
+      },
+      duration: {
+        startedAt: '2017-01-02T03:04:05.678',
+        stoppedAt: '2017-02-03T04:05:06.789'
+      },
+      note: {
+        text: 'development Working with John on the new project',
+        tags: [
+          {
+            indices: [
+              0,
+              11
+            ],
+            key: 'development'
+          }
+        ],
+        mentions: [
+          {
+            indices: [
+              25,
+              29
+            ],
+            key: 'John'
+          }
+        ]
+      }
+    }
+
+    const expectedText = 'sleeping - development Working with John on the new project (32d 1h 1m 1s)'
+
+    const result = trackingParser(timeEntry)
+
+    expect(result).toEqual(expectedText)
   })
 })

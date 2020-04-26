@@ -8,6 +8,7 @@ before_script:
   - ./cc-test-reporter before-build
 
 script:
+  - npm run test
   - npm run coverage:ci
 
 after_script:

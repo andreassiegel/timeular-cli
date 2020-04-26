@@ -46,11 +46,11 @@ describe('Application Tests', () => {
 
     it('returns usage info to stdout', async () => {
       const { stdout: result } = await cli(['help'], '.')
-      expect(result).toContain('Usage: timeular <command> [arguments]')
+      expect(result).toContain('Usage: timeular <command> [options]')
     })
 
     it('returns command info to stdout', async () => {
-      const expectedCommands = ['timeular track [activityName]', 'timeular stop']
+      const expectedCommands = ['timeular start [activityName]', 'timeular stop', 'timeular list', 'timeular status']
       const { stdout: result } = await cli(['help'], '.')
       expect(result).toContain('Commands:')
       const commands = result.replace(/\n/g, ' ').replace(/^.*Commands:/, '').split(/\s(\s)+/)

@@ -25,17 +25,17 @@ const getActivities = async token => {
 }
 
 const startTracking = async (token, activityId, message) => {
-  const { data } = await axios.post(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, { note: parseNote(message), startedAt: _convertToAPICompatibleDate(new Date()) }, {
-    headers: createAPIHeaders(token)
-  })
-  return data
-}
-
-const getCurrentTracking = async token => {
-  const { data: { currentTracking } } = await axios.get(`${TIMEULAR_API_URL}/tracking`, {
+  const { data: { currentTracking } } = await axios.post(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, { note: parseNote(message), startedAt: _convertToAPICompatibleDate(new Date()) }, {
     headers: createAPIHeaders(token)
   })
   return currentTracking
+}
+
+const getCurrentTracking = async token => {
+  const { data = {} } = await axios.get(`${TIMEULAR_API_URL}/tracking`, {
+    headers: createAPIHeaders(token)
+  })
+  return data.currentTracking || null
 }
 
 const stopTracking = async (token, activityId) => {
@@ -43,16 +43,6 @@ const stopTracking = async (token, activityId) => {
     headers: createAPIHeaders(token)
   })
   return createdTimeEntry
-}
-
-async function downloadReport (token, { startTimestamp, stopTimestamp, timezone = 'Europe/Berlin', fileType = 'csv' }) {
-  startTimestamp = _convertToAPICompatibleDate(startTimestamp)
-  stopTimestamp = _convertToAPICompatibleDate(stopTimestamp)
-  const { data } = await axios.get(`${TIMEULAR_API_URL}/report/${startTimestamp}/${stopTimestamp}?timezone=${encodeURIComponent(timezone)}&fileType=${fileType}`, {
-    headers: createAPIHeaders(token),
-    responseType: 'arraybuffer'
-  })
-  return data
 }
 
 const _convertToAPICompatibleDate = date => {
@@ -90,4 +80,4 @@ const _extractFirstKey = note => {
 
 const _containsLabel = text => text.search(/\s[@#][\w\d]|^[@#][\w\d]/) > -1
 
-module.exports = { signIn, getActivities, startTracking, getCurrentTracking, stopTracking, downloadReport, parseNote }
+module.exports = { signIn, getActivities, startTracking, getCurrentTracking, stopTracking, parseNote }
