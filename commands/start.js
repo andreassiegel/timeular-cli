@@ -12,6 +12,7 @@ const start = async argv => {
   const spinner = new Spinner(feedbackColor('Getting available activities...'))
   const spinner2 = new Spinner(feedbackColor('Start tracking...'))
   try {
+    spinner.start()
     const activities = await getActivities(apiToken)
     spinner.end()
 
