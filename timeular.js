@@ -17,21 +17,7 @@ const init = async () => {
   yargs
     .scriptName('timeular')
     .usage('Usage: $0 <command> [options]')
-    .command('start [activityName]', 'Start tracking for a specific activity, stops current tracking before starting a new one', yargs => {
-      yargs
-        .positional('activityName', {
-          type: 'string',
-          default: '',
-          describe: 'the name of the activity to track'
-        })
-        .option('m', {
-          alias: 'message',
-          describe: 'the message to add to the activity',
-          type: 'string',
-          nargs: 1,
-          demand: false
-        })
-    }, start, [apiLogin])
+    .command('start [activityName]', 'Start tracking for a specific activity, stops current tracking before starting a new one', startBuilder, start, [apiLogin])
     .command('stop', 'Stops tracking current activity', () => {}, stop, [apiLogin])
     .command('status', 'Shows the current activity tracking status', () => {}, status, [apiLogin])
     .command('list', 'Lists all activities that are available for tracking', () => {}, list, [apiLogin])
@@ -46,6 +32,22 @@ const init = async () => {
     .middleware(apiLogin)
     .fail(errorHandler)
     .argv
+}
+
+const startBuilder = yargs => {
+  yargs
+    .positional('activityName', {
+      type: 'string',
+      default: '',
+      describe: 'the name of the activity to track'
+    })
+    .option('m', {
+      alias: 'message',
+      describe: 'the message to add to the activity',
+      type: 'string',
+      nargs: 1,
+      demand: false
+    })
 }
 
 init()
