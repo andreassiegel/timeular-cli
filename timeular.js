@@ -6,6 +6,7 @@ const yargs = require('yargs')
 const inquirer = require('inquirer')
 const { start, stop, status, list } = require('./commands')
 const { getCLIVersion } = require('./helpers/get-cli-version')
+const errorHandler = require('./helpers/errorHandler')
 const apiLogin = require('./middleware/apiLogin')
 
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
@@ -43,17 +44,8 @@ const init = async () => {
     .strict(true)
     .demandCommand(1, '')
     .middleware(apiLogin)
-    .fail(_errorHandler)
+    .fail(errorHandler)
     .argv
-}
-
-const _errorHandler = (msg, err, yargs) => {
-  if (!err && !msg) {
-    yargs.showHelp()
-  } else {
-    console.log(msg || (err && err.message) || err)
-  }
-  process.exit(1)
 }
 
 init()
