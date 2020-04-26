@@ -7,8 +7,6 @@
     "test": "npx jest",
     "coverage": "npm test -- --coverage --reporters=\"jest-junit\"",
     "coverage:ci": "npm test -- --ci --coverage --reporters=\"jest-junit\" && coveralls < coverage/lcov.info",
-    "release": "npx semantic-release",
-    "semantic-release": "semantic-release",
     "commit": "npx git-cz"
   },
   "bin": {
@@ -40,7 +38,6 @@
     "jest": "^25.3.0",
     "jest-extended": "^0.11.5",
     "jest-junit": "^10.0.0",
-    "semantic-release": "^17.0.4",
     "standard": "^14.3.1"
   },
   "dependencies": {
@@ -57,15 +54,6 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  },
-  "release": {
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/npm",
-      "@semantic-release/changelog",
-      "@semantic-release/git"
-    ]
   },
   "standard": {
     "env": [
