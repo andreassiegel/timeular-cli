@@ -16,33 +16,37 @@
 
 # Timeular CLI
 
-Command-line integration for [Timeular](https://timeular.com/) to track activities and check the status of the currently tracked activity.
+Command-line integration for [Timeular](https://timeular.com/) to track
+activities and check the status of the currently tracked activity.
 
-It can be used as an interactive CLI by asking the user questions or directly by setting the required input via the corresponding flags.
+It can be used as an interactive CLI by asking the user questions or directly
+by setting the required input via the corresponding flags.
 
 The current version does not require a Timeular Pro account.
 It uses only API features that are available in the free version.
 
 ## Installation
 
-*While refactoring is ongoing and new features are being added, the application is not published to any registry yet.*
+*While refactoring is ongoing and new features are being added, the application
+is not published to any registry yet.*
 
 Therefore, you need to check out the repository before you can actually install it:
 
 ```shell script
 $ git clone https://github.com/andreassiegel/timeular-cli.git
 $ cd timeular-cli
-$ npm install -g 
+$ npm install -g
 ```
 
 ## Configuration
 
-Timeular CLI is using the public Timeular API that requires authentication via your personal API key.
+Timeular CLI is using the public Timeular API that requires authentication via your
+personal API key.
 
 You can get your API credentials from the [Timeular account page](https://profile.timeular.com/#/app/account).
 
-To be able to use Timeular CLI, you have to export the API credentials as environment variables,
-e.g., in your `.profile` or `.bashrc` or `.zshrc` file:
+To be able to use Timeular CLI, you have to export the API credentials as
+environment variables, e.g., in your `.profile` or `.bashrc` or `.zshrc` file:
 
 ```shell script
 export TIMEULAR_API_KEY="XXXXXXXXXX"
@@ -73,14 +77,15 @@ Activities can be tracked in multiple ways:
 
 #### Interactive Tracking
 
-If you do not provide any options to the `start` command, you will be prompted to select the activity to track:
+If you do not provide any options to the `start` command,
+you will be prompted to select the activity to track:
 
 ```
 $ timeular start
-0	Administration
-1	ARC
-2	DEV
-3	Education
+0   Administration
+1   ARC
+2   DEV
+3   Education
 ✔ Number of activity to track: · 0
 ✔ Note: · Prepare release
 Stopped tracking: DEV - Working on Timeular CLI (1h 28m 11s)
@@ -101,7 +106,8 @@ Nevertheless, you will be prompted for a note.
 
 #### Tracking of a specified Activity with a Note
 
-In addition, you can also add a note when you can directly specify the activity and start tracking immediately:
+In addition, you can also add a note when you can directly specify the activity and
+start tracking immediately:
 
 ```shell script
 $ timeular track <activity> -m <note>
@@ -139,8 +145,8 @@ If the tracker is running, the currently tracked is highlighted.
 
 ```
 $ timeular list
-0	Administration
-1	ARC
-2	DEV  
-3	Education
+0   Administration
+1   ARC
+2   DEV  
+3   Education
 ```
