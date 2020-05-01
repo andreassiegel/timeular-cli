@@ -41,7 +41,7 @@ const _getActivityFromInput = async timeEntries => {
 
 const _getOptions = timeEntries => {
   const timeEntryMap = timeEntries
-    .filter(({ note = {} }) => !!note.text) // don't continue anything without a note
+    .filter(({ note = {} }) => !!note && !!note.text) // don't continue anything without a note
     .reduce(_collectUniqueEntries, {})
   return orderBy(Object.values(timeEntryMap), ['stoppedAt'], ['desc']).slice(0, 10)
 }
@@ -54,4 +54,4 @@ const _collectUniqueEntries = (acc, timeEntry) => {
   return acc
 }
 
-module.exports = continueActivity
+module.exports = { continueActivity, _getOptions }
