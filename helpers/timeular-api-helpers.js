@@ -24,8 +24,8 @@ const getActivities = async token => {
   return activities
 }
 
-const startTracking = async (token, activityId, message) => {
-  const { data: { currentTracking } } = await axios.post(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, { note: parseNote(message), startedAt: _convertToAPICompatibleDate(new Date()) }, {
+const startTracking = async (token, activityId, note) => {
+  const { data: { currentTracking } } = await axios.post(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, { note: parseNote(note), startedAt: _convertToAPICompatibleDate(new Date()) }, {
     headers: createAPIHeaders(token)
   })
   return currentTracking
@@ -45,12 +45,26 @@ const stopTracking = async (token, activityId) => {
   return createdTimeEntry
 }
 
+const getTimeEntries = async (token, stopped, started) => {
+  const stoppedAfter = _convertToAPICompatibleDate(stopped)
+  const startedBefore = _convertToAPICompatibleDate(started)
+  const { data: { timeEntries } } = await axios.get(`${TIMEULAR_API_URL}/time-entries/${stoppedAfter}/${startedBefore}`, {
+    headers: createAPIHeaders(token)
+  })
+  return timeEntries
+}
+
 const _convertToAPICompatibleDate = date => {
   const dateString = date.toISOString()
   return dateString.slice(0, dateString.length - 1)
 }
 
-const parseNote = note => note ? _extractLabels(note) : undefined
+const parseNote = note => {
+  if (!note) {
+    return undefined
+  }
+  return typeof note === 'string' ? _extractLabels(note) : note
+}
 
 const _extractLabels = (text, tags = [], mentions = []) => {
   if (_containsLabel(text)) {
@@ -80,4 +94,4 @@ const _extractFirstKey = note => {
 
 const _containsLabel = text => text.search(/\s[@#][\w\d]|^[@#][\w\d]/) > -1
 
-module.exports = { signIn, getActivities, startTracking, getCurrentTracking, stopTracking, parseNote }
+module.exports = { signIn, getActivities, startTracking, getCurrentTracking, stopTracking, getTimeEntries, parseNote }

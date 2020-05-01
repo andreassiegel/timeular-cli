@@ -384,6 +384,106 @@ describe('Timeular API Helpers', () => {
     })
   })
 
+  describe('getTimeEntries()', () => {
+    const token = '12345'
+    const stoppedAfter = new Date('2017-01-01T00:00:00.000Z')
+    const startedBefore = new Date('2017-12-31T23:59:59.999Z')
+    const response = {
+      status: 200,
+      statusText: 'OK',
+      data: {
+        timeEntries: [
+          {
+            id: '987',
+            activity: {
+              id: '123',
+              name: 'sleeping',
+              color: '#a1b2c3',
+              integration: 'zei'
+            },
+            duration: {
+              startedAt: '2017-01-02T03:04:05.678',
+              stoppedAt: '2017-02-03T04:05:06.789'
+            },
+            note: {
+              text: 'development Working with John on the new project',
+              tags: [
+                {
+                  indices: [
+                    0,
+                    11
+                  ],
+                  key: 'development'
+                }
+              ],
+              mentions: [
+                {
+                  indices: [
+                    25,
+                    29
+                  ],
+                  key: 'John'
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+
+    it('sends request with token and timestamps', async () => {
+      axios.get.mockImplementationOnce(() => Promise.resolve(response))
+      const expectedHeaders = { Authorization: `Bearer ${token}` }
+
+      await apiHelpers.getTimeEntries(token, stoppedAfter, startedBefore)
+
+      expect(axios.get).toHaveBeenCalledWith(`${TIMEULAR_API_URL}/time-entries/2017-01-01T00:00:00.000/2017-12-31T23:59:59.999`, { headers: expectedHeaders })
+    })
+
+    it('returns time entries data', async () => {
+      axios.get.mockImplementationOnce(() => Promise.resolve(response))
+
+      await expect(apiHelpers.getTimeEntries(token, stoppedAfter, startedBefore)).resolves.toEqual(response.data.timeEntries)
+    })
+
+    it('returns empty list when there are no time entries', async () => {
+      const response = {
+        status: 200,
+        statusText: 'OK',
+        data: {
+          timeEntries: []
+        }
+      }
+      axios.get.mockImplementationOnce(() => Promise.resolve(response))
+
+      await expect(apiHelpers.getTimeEntries(token, stoppedAfter, startedBefore)).resolves.toEqual([])
+    })
+
+    it('rejects for 400 Bad Request', async () => {
+      const response = {
+        status: 400,
+        statusText: 'Bad Request',
+        data: { message: 'Explanation of what has happened' }
+      }
+      // eslint-disable-next-line prefer-promise-reject-errors
+      axios.get.mockImplementationOnce(() => Promise.reject({ response }))
+
+      await expect(apiHelpers.getTimeEntries(token, stoppedAfter, startedBefore)).rejects.toHaveProperty('response', response)
+    })
+
+    it('rejects for 401 Unauthorized', async () => {
+      const response = {
+        status: 401,
+        statusText: 'Unauthorized',
+        data: { message: 'Explanation of what has happened' }
+      }
+      // eslint-disable-next-line prefer-promise-reject-errors
+      axios.get.mockImplementationOnce(() => Promise.reject({ response }))
+
+      await expect(apiHelpers.getTimeEntries(token, stoppedAfter, startedBefore)).rejects.toHaveProperty('response', response)
+    })
+  })
+
   describe('parseNote()', () => {
     it('returns undefined for undefined input', () => {
       const msg = undefined
@@ -563,6 +663,33 @@ describe('Timeular API Helpers', () => {
 
       const result = apiHelpers.parseNote(text)
       expect(result).toEqual(expectedNote)
+    })
+
+    it('returns note object if provided instead of string', () => {
+      const note = {
+        text: 'development Working with John on the new project',
+        tags: [
+          {
+            indices: [
+              0,
+              11
+            ],
+            key: 'development'
+          }
+        ],
+        mentions: [
+          {
+            indices: [
+              25,
+              29
+            ],
+            key: 'John'
+          }
+        ]
+      }
+
+      const result = apiHelpers.parseNote(note)
+      expect(result).toEqual(note)
     })
   })
 })
