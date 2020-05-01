@@ -315,6 +315,141 @@ describe('internal functions for continue', () => {
       expect(result).toEqual(expectedTimeEntries)
     })
 
+    it('orders by stoppedAt', () => {
+      const timeEntries = [
+        {
+          id: '456',
+          activity: {
+            id: '123',
+            name: 'sleeping',
+            color: '#a1b2c3',
+            integration: 'zei'
+          },
+          duration: {
+            startedAt: '2016-01-02T03:04:05.678',
+            stoppedAt: '2016-02-03T04:05:06.789'
+          },
+          note: {
+            text: 'development Working with John on the new project',
+            tags: [
+              {
+                indices: [
+                  0,
+                  11
+                ],
+                key: 'development'
+              }
+            ],
+            mentions: [
+              {
+                indices: [
+                  25,
+                  29
+                ],
+                key: 'John'
+              }
+            ]
+          }
+        },
+        {
+          id: '123',
+          activity: {
+            id: '456',
+            name: 'eating',
+            color: '#a1b2c3',
+            integration: 'zei'
+          },
+          duration: {
+            startedAt: '2016-05-02T03:04:05.678',
+            stoppedAt: '2016-05-03T04:05:06.789'
+          },
+          note: {
+            text: 'yummy pizza',
+            tags: [],
+            mentions: []
+          }
+        },
+        {
+          id: '987',
+          activity: {
+            id: '123',
+            name: 'sleeping',
+            color: '#a1b2c3',
+            integration: 'zei'
+          },
+          duration: {
+            startedAt: '2017-01-02T03:04:05.678',
+            stoppedAt: '2017-02-03T04:05:06.789'
+          },
+          note: {
+            text: 'development Working with John on the new project',
+            tags: [
+              {
+                indices: [
+                  0,
+                  11
+                ],
+                key: 'development'
+              }
+            ],
+            mentions: [
+              {
+                indices: [
+                  25,
+                  29
+                ],
+                key: 'John'
+              }
+            ]
+          }
+        }
+      ]
+      const expectedTimeEntries = [
+        {
+          activityId: '123',
+          key: 'development Working with John on the new project',
+          stoppedAt: '2017-02-03T04:05:06.789',
+          name: 'sleeping',
+          note: {
+            text: 'development Working with John on the new project',
+            tags: [
+              {
+                indices: [
+                  0,
+                  11
+                ],
+                key: 'development'
+              }
+            ],
+            mentions: [
+              {
+                indices: [
+                  25,
+                  29
+                ],
+                key: 'John'
+              }
+            ]
+          }
+        },
+        {
+          activityId: '456',
+          key: 'yummy pizza',
+          stoppedAt: '2016-05-03T04:05:06.789',
+          name: 'eating',
+          note: {
+            text: 'yummy pizza',
+            tags: [],
+            mentions: []
+          }
+        }
+      ]
+
+      const result = getOptions(timeEntries)
+
+      expect(result).toEqual(expectedTimeEntries)
+    })
+
     it('filters entries with empty note text', () => {
       const timeEntries = [
         {
@@ -386,6 +521,30 @@ describe('internal functions for continue', () => {
             stoppedAt: '2017-02-03T04:05:06.789'
           },
           note: null
+        }
+      ]
+      const expectedTimeEntries = []
+
+      const result = getOptions(timeEntries)
+
+      expect(result).toEqual(expectedTimeEntries)
+    })
+
+    it('filters entries with undefined note', () => {
+      const timeEntries = [
+        {
+          id: '987',
+          activity: {
+            id: '123',
+            name: 'sleeping',
+            color: '#a1b2c3',
+            integration: 'zei'
+          },
+          duration: {
+            startedAt: '2017-01-02T03:04:05.678',
+            stoppedAt: '2017-02-03T04:05:06.789'
+          },
+          note: undefined
         }
       ]
       const expectedTimeEntries = []
