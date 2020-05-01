@@ -9,8 +9,25 @@ const stop = require('./stop')
 
 const start = async argv => {
   const { apiToken, activityName } = argv
+  const spinner = new Spinner(feedbackColor('Start tracking...'))
+  try {
+    const id = argv.id || await _getActivityIdFromName(apiToken, activityName)
+    const message = argv.message || await _getMessageFromInput()
+
+    spinner.start()
+    await _stopPrevious(argv)
+
+    const newActivity = await startTracking(apiToken, id, message)
+    spinner.end()
+    console.log('Started tracking: ' + parse(newActivity))
+  } catch (err) {
+    spinner.end()
+    throw err
+  }
+}
+
+const _getActivityIdFromName = async (apiToken, activityName) => {
   const spinner = new Spinner(feedbackColor('Getting available activities...'))
-  const spinner2 = new Spinner(feedbackColor('Start tracking...'))
   try {
     spinner.start()
     const activities = await getActivities(apiToken)
@@ -20,17 +37,9 @@ const start = async argv => {
     if (!activity) {
       throw new Error('Activity not found')
     }
-    const message = argv.message || await _getMessageFromInput()
-
-    spinner2.start()
-    await _stopPrevious(argv)
-
-    const newActivity = await startTracking(apiToken, activity.id, message)
-    spinner2.end()
-    console.log('Started tracking: ' + parse(newActivity))
+    return activity.id
   } catch (err) {
     spinner.end()
-    spinner2.end()
     throw err
   }
 }
