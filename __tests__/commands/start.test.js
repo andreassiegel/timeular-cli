@@ -1,12 +1,12 @@
 const { start } = require('../../commands')
 const apiHelpers = require('../../helpers/timeular-api-helpers')
+const prompt = require('../../helpers/prompt')
 
 jest.mock('../../helpers/timeular-api-helpers')
+jest.mock('../../helpers/prompt')
 
 describe('start command', () => {
-  const argv = {
-    apiToken: 'token12345'
-  }
+  let argv
 
   const activity = {
     id: '123',
@@ -122,6 +122,10 @@ describe('start command', () => {
       error: jest.spyOn(global.console, 'error')
     }
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {})
+
+    argv = {
+      apiToken: 'token12345'
+    }
   })
 
   afterEach(() => {
@@ -228,5 +232,104 @@ describe('start command', () => {
 
     expect(apiHelpers.stopTracking).toHaveBeenCalledTimes(1)
     expect(apiHelpers.startTracking).toHaveBeenCalledTimes(0)
+  })
+
+  it('starts tracking with activityId and note object as message', async () => {
+    const note = {
+      text: 'development Working with John on the new project',
+      tags: [
+        {
+          indices: [
+            0,
+            11
+          ],
+          key: 'development'
+        }
+      ],
+      mentions: [
+        {
+          indices: [
+            25,
+            29
+          ],
+          key: 'John'
+        }
+      ]
+    }
+    argv.activityId = 'activity123'
+    argv.message = note
+
+    apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(null))
+    apiHelpers.startTracking.mockImplementationOnce(() => Promise.resolve(newTracking))
+
+    await start(argv)
+
+    expect(apiHelpers.startTracking).toHaveBeenCalledWith(argv.apiToken, argv.activityId, note)
+  })
+
+  it('does not check activities if activityId provided', async () => {
+    const note = {
+      text: 'development Working with John on the new project',
+      tags: [
+        {
+          indices: [
+            0,
+            11
+          ],
+          key: 'development'
+        }
+      ],
+      mentions: [
+        {
+          indices: [
+            25,
+            29
+          ],
+          key: 'John'
+        }
+      ]
+    }
+    argv.activityId = 'activity123'
+    argv.message = note
+
+    apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(null))
+    apiHelpers.startTracking.mockImplementationOnce(() => Promise.resolve(newTracking))
+
+    await start(argv)
+
+    expect(apiHelpers.getActivities).toHaveBeenCalledTimes(0)
+  })
+
+  it('gets activity and message from prompt if not provided', async () => {
+    const message = 'test'
+    const index = 0
+
+    apiHelpers.getActivities.mockImplementationOnce(() => Promise.resolve([activity]))
+    prompt.promptIndex.mockImplementationOnce(() => Promise.resolve(index))
+    prompt.promptInput.mockImplementationOnce(() => Promise.resolve(message))
+    apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(null))
+    apiHelpers.startTracking.mockImplementationOnce(() => Promise.resolve(newTracking))
+
+    await start(argv)
+
+    expect(prompt.promptIndex).toHaveBeenCalledTimes(1)
+    expect(prompt.promptInput).toHaveBeenCalledTimes(1)
+    expect(apiHelpers.startTracking).toHaveBeenCalledWith(argv.apiToken, activity.id, message)
+  })
+
+  it('it rejects if there are no activities', async () => {
+    apiHelpers.getActivities.mockImplementationOnce(() => Promise.resolve([]))
+    apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(null))
+    apiHelpers.startTracking.mockImplementationOnce(() => Promise.resolve(newTracking))
+
+    await expect(start(argv)).rejects.toThrow(new Error('No activities to track'))
+  })
+
+  it('it rejects if activities are undefined', async () => {
+    apiHelpers.getActivities.mockImplementationOnce(() => Promise.resolve(undefined))
+    apiHelpers.getCurrentTracking.mockImplementationOnce(() => Promise.resolve(null))
+    apiHelpers.startTracking.mockImplementationOnce(() => Promise.resolve(newTracking))
+
+    await expect(start(argv)).rejects.toThrow(new Error('No activities to track'))
   })
 })
