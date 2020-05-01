@@ -24,8 +24,8 @@ const getActivities = async token => {
   return activities
 }
 
-const startTracking = async (token, activityId, message) => {
-  const { data: { currentTracking } } = await axios.post(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, { note: parseNote(message), startedAt: _convertToAPICompatibleDate(new Date()) }, {
+const startTracking = async (token, activityId, note) => {
+  const { data: { currentTracking } } = await axios.post(`${TIMEULAR_API_URL}/tracking/${activityId}/start`, { note: parseNote(note), startedAt: _convertToAPICompatibleDate(new Date()) }, {
     headers: createAPIHeaders(token)
   })
   return currentTracking
@@ -50,7 +50,12 @@ const _convertToAPICompatibleDate = date => {
   return dateString.slice(0, dateString.length - 1)
 }
 
-const parseNote = note => note ? _extractLabels(note) : undefined
+const parseNote = note => {
+  if (!note) {
+    return undefined
+  }
+  return typeof note === 'string' ? _extractLabels(note) : note
+}
 
 const _extractLabels = (text, tags = [], mentions = []) => {
   if (_containsLabel(text)) {
