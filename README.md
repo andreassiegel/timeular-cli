@@ -61,6 +61,7 @@ Commands:
   timeular start [activityName]  Start tracking for a specific activity, stops current tracking
                                  before starting a new one
   timeular stop                  Stops tracking current activity
+  timeular continue              Continues tracking of a previous activity
   timeular status                Shows the current activity tracking status
   timeular list                  Lists all activities that are available for tracking
 
@@ -112,6 +113,18 @@ $ timeular track <activity> -m <note>
 ```
 
 The note may contain tags (`#tag`) and mentions (`@mention`).
+
+### Continue Tracking of a previous Activity
+
+If you want to continue an activity you tracked recently, use the `continue` command.
+
+It retrieves the time entries you tracked during the three previous days and the current day so far,
+and then lets you select one from the last 10.
+
+The options you can choose from are unique by the associated note and ordered by the time you stopped tracking.
+Tracked activities that did not have a note, are excluded from the selection.
+
+Including the previous three days allows you to continue where you left before the weekend, for instance.
 
 ### Check the Tracking Status
 
