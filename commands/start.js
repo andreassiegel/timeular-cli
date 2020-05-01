@@ -52,6 +52,9 @@ const _getActivity = async (activityName, activities = []) => {
 }
 
 const _getActivityFromInput = async activities => {
+  if (activities.length === 0) {
+    throw new Error('No activities to track')
+  }
   activities = sortBy(activities, 'name')
   activities.forEach((activity, index) => {
     console.log(`${index}\t${activity.name}`)
