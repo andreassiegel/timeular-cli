@@ -40,7 +40,8 @@
     "jest": "^25.3.0",
     "jest-extended": "^0.11.5",
     "jest-junit": "^10.0.0",
-    "standard": "^14.3.1"
+    "standard": "^14.3.1",
+    "snyk": "^1.316.1"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -50,8 +51,7 @@
     "enquirer": "^2.3.5",
     "http-status": "^1.4.2",
     "lodash": "^4.17.15",
-    "yargs": "^15.3.1",
-    "snyk": "^1.316.1"
+    "yargs": "^15.3.1"
   },
   "config": {
     "commitizen": {
