@@ -98,7 +98,7 @@ The list includes all activities you configured in Timeular.
 You can directly specify the activity in order to start tracking without selecting from the list:
 
 ```shell script
-$ timeular track <activity>
+$ timeular start <activity>
 ```
 
 Nevertheless, you will be prompted for a note.
@@ -109,7 +109,7 @@ In addition, you can also add a note when you can directly specify the activity 
 start tracking immediately:
 
 ```shell script
-$ timeular track <activity> -m <note>
+$ timeular start <activity> -m <note>
 ```
 
 The note may contain tags (`#tag`) and mentions (`@mention`).
