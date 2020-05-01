@@ -7,7 +7,9 @@
     "test": "npx jest",
     "coverage": "npm test -- --coverage --reporters=\"jest-junit\"",
     "coverage:ci": "npm test -- --ci --coverage --reporters=\"jest-junit\" && coveralls < coverage/lcov.info",
-    "commit": "npx git-cz"
+    "commit": "npx git-cz",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "bin": {
     "timeular": "timeular.js"
@@ -38,7 +40,8 @@
     "jest": "^25.3.0",
     "jest-extended": "^0.11.5",
     "jest-junit": "^10.0.0",
-    "standard": "^14.3.1"
+    "standard": "^14.3.1",
+    "snyk": "^1.316.1"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -73,5 +76,6 @@
       "pre-commit": "npx standard --fix",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
-  }
+  },
+  "snyk": true
 }
