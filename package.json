@@ -44,7 +44,7 @@
     "standard": "^14.3.1"
   },
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "chalk": "^4.0.0",
     "clui": "^0.3.6",
     "dotenv": "^8.2.0",
